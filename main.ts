@@ -14,7 +14,7 @@ function OnRadioReceivedHandler (name: string, value: number) {
         radioNameBuffer.shift()
         radioValueBuffer.shift()
     }
-    if (parsedName.length != 4) {
+    if (parsedName.length == 4) {
         dataType = parsedName[3]
         radio.sendValue("" + (1 - sequenceNum) + ":" + radioID + ":" + SENSOR_ID, -1)
         showLedOnCmd(value)
