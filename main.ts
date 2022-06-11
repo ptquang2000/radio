@@ -93,17 +93,9 @@ let radioNameBuffer: string[] = []
 radioNameBuffer = []
 radioValueBuffer = []
 dataSeqNum = 0
-let SENSOR_SEQ = 1
 SENSOR_ID = 1
 radio.setGroup(244)
 RADIO_ID = "1813678"
-let LED_SENSOR_ID = 1
-let LED_CMD = [
-"0",
-"1",
-"2",
-"3"
-]
 loops.everyInterval(100, function () {
     if (radioNameBuffer.length != 0) {
         radio.sendValue("" + dataSeqNum + ":" + radioNameBuffer[0], radioValueBuffer[0])
