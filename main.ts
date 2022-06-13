@@ -9,6 +9,7 @@ function OnRadioReceivedHandler (name: string, value: number) {
     if (radioID != RADIO_ID || sensorID != SENSOR_ID) {
         return
     }
+    successNotification(2)
     if (parsedName.length == 3 && dataSeqNum != seqNum) {
         dataSeqNum = seqNum
         radioNameBuffer.shift()
@@ -26,10 +27,40 @@ function OnRadioReceivedHandler (name: string, value: number) {
 function releaseBuffer () {
     radio.sendValue("" + dataSeqNum + ":" + radioNameBuffer[0], radioValueBuffer[0])
     lastRelease = control.millis()
+    successNotification(0)
 }
 input.onButtonPressed(Button.B, function () {
     OnButtonPressedHandler("B")
 })
+function successNotification (_type: number) {
+    if (_type == 0) {
+        basic.showLeds(`
+            # # # # #
+            # . . . .
+            # # # # #
+            . . . . #
+            # # # # #
+            `)
+    } else if (_type == 1) {
+        basic.showLeds(`
+            . . # . .
+            . # . # .
+            # . . . #
+            # # # # #
+            # . . . #
+            `)
+    } else {
+        basic.showLeds(`
+            # # # # .
+            # . . . #
+            # # # # .
+            # . . . #
+            # . . . #
+            `)
+    }
+    basic.pause(100)
+    basic.clearScreen()
+}
 serial.onDataReceived(serial.delimiters(Delimiters.Hash), function () {
     OnButtonPressedHandler(serial.readUntil(serial.delimiters(Delimiters.Hash)))
 })
@@ -37,13 +68,13 @@ radio.onReceivedValue(function (name, value) {
     OnRadioReceivedHandler(name, value)
 })
 function OnButtonPressedHandler (cmd: string) {
-    msg = "" + radioID + ":" + SENSOR_ID
+    msg = "" + RADIO_ID + ":" + SENSOR_ID
     value = 0
-    if (cmd != "A") {
+    if (cmd == "A") {
         msg = "" + msg + ":" + "TEMP"
         value = input.temperature()
     }
-    if (cmd != "B") {
+    if (cmd == "B") {
         msg = "" + msg + (":" + "LIGHT")
         value = input.lightLevel()
     }
@@ -147,12 +178,10 @@ dataSeqNum = 0
 lastRelease = 0
 SENSOR_ID = 1
 radio.setGroup(244)
-RADIO_ID = "1813678"
-let TIMEOUT = 500
-control.inBackground(function () {
-    while (true) {
-        if (radioNameBuffer.length != 0 && control.millis() - lastRelease >= TIMEOUT) {
-            releaseBuffer()
-        }
+RADIO_ID = "555"
+let TIMEOUT = 5000
+basic.forever(function () {
+    if (radioNameBuffer.length != 0 && control.millis() - lastRelease >= TIMEOUT) {
+        releaseBuffer()
     }
 })
