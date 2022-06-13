@@ -20,7 +20,7 @@ function OnRadioReceivedHandler (name: string, value: number) {
     }
     if (parsedName.length == 4) {
         dataType = parsedName[3]
-        radio.sendValue("" + (1 - seqNum) + ":" + radioID + ":" + SENSOR_ID, -1)
+        radio.sendValue("" + (1 - seqNum) + ":" + RADIO_ID + ":" + SENSOR_ID, -1)
         showLedOnCmd(value)
     }
 }
@@ -61,9 +61,6 @@ function successNotification (_type: number) {
     basic.pause(100)
     basic.clearScreen()
 }
-serial.onDataReceived(serial.delimiters(Delimiters.Hash), function () {
-    OnButtonPressedHandler(serial.readUntil(serial.delimiters(Delimiters.Hash)))
-})
 radio.onReceivedValue(function (name, value) {
     OnRadioReceivedHandler(name, value)
 })
