@@ -71,14 +71,13 @@ function OnButtonPressedHandler (cmd: string) {
     msg = "" + RADIO_ID + ":" + SENSOR_ID
     value = 0
     if (cmd == "A") {
-        msg = "" + msg + ":" + "TEMP"
+        msg = "" + msg + ":" + "0"
         value = input.temperature()
     }
     if (cmd == "B") {
-        msg = "" + msg + (":" + "LIGHT")
+        msg = "" + msg + (":" + "1")
         value = input.lightLevel()
     }
-    radioNameBuffer.push(msg)
     radioNameBuffer.push(msg)
     radioValueBuffer.push(value)
     if (radioNameBuffer.length == 1) {
@@ -178,7 +177,7 @@ dataSeqNum = 0
 lastRelease = 0
 SENSOR_ID = 1
 radio.setGroup(244)
-RADIO_ID = "555"
+RADIO_ID = "55"
 let TIMEOUT = 5000
 basic.forever(function () {
     if (radioNameBuffer.length != 0 && control.millis() - lastRelease >= TIMEOUT) {
