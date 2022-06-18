@@ -21,6 +21,7 @@ function OnRadioReceivedHandler (name: string, value: number) {
     if (parsedName.length == 4) {
         dataType = parsedName[3]
         radio.sendValue("" + (1 - seqNum) + ":" + RADIO_ID + ":" + SENSOR_ID, -1)
+        successNotification(1)
         showLedOnCmd(value)
     }
 }
