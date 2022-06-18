@@ -9,8 +9,8 @@ function OnRadioReceivedHandler (name: string, value: number) {
     if (radioID != RADIO_ID || sensorID != SENSOR_ID) {
         return
     }
-    successNotification(2)
     if (parsedName.length == 3 && dataSeqNum != seqNum) {
+        RadioDebugger(2, seqNum)
         dataSeqNum = seqNum
         radioNameBuffer.shift()
         radioValueBuffer.shift()
@@ -21,47 +21,89 @@ function OnRadioReceivedHandler (name: string, value: number) {
     if (parsedName.length == 4) {
         dataType = parsedName[3]
         radio.sendValue("" + (1 - seqNum) + ":" + RADIO_ID + ":" + SENSOR_ID, -1)
-        successNotification(1)
+        RadioDebugger(1, 1 - seqNum)
         showLedOnCmd(value)
     }
 }
 function releaseBuffer () {
     radio.sendValue("" + dataSeqNum + ":" + radioNameBuffer[0], radioValueBuffer[0])
     lastRelease = control.millis()
-    successNotification(0)
+    RadioDebugger(0, dataSeqNum)
+}
+function RadioDebugger (_type: number, seg: number) {
+    if (_type == 0) {
+        basic.showLeds(`
+            . . # . .
+            . # . # .
+            # . # . #
+            . # . # .
+            # . . . #
+            `)
+        basic.pause(50)
+        basic.showLeds(`
+            . . # . .
+            . # . # .
+            # . # . #
+            . # . # .
+            # . . . #
+            `)
+    } else if (_type == 1) {
+        basic.showLeds(`
+            # . . . #
+            . # . # .
+            # . # . #
+            . # . # .
+            . . # . .
+            `)
+        basic.pause(50)
+        basic.showLeds(`
+            # . . . #
+            . # . # .
+            # . # . #
+            . # . # .
+            . . # . .
+            `)
+    } else if (_type == 2) {
+        basic.showLeds(`
+            . # # . .
+            # . . # .
+            # . . # .
+            # . . # .
+            . # # . .
+            `)
+        basic.pause(50)
+        basic.showLeds(`
+            # . . # .
+            # . # . .
+            # # . . .
+            # . # . .
+            # . . # .
+            `)
+    } else {
+        basic.showLeds(`
+            # . . . #
+            . # . # .
+            . . # . .
+            . # . # .
+            # . . . #
+            `)
+        basic.pause(50)
+        basic.showLeds(`
+            # . . . #
+            . # . # .
+            . . # . .
+            . # . # .
+            # . . . #
+            `)
+    }
+    basic.pause(50)
+    basic.showNumber(seg)
+    basic.pause(50)
+    basic.clearScreen()
 }
 input.onButtonPressed(Button.B, function () {
     OnButtonPressedHandler("B")
 })
-function successNotification (_type: number) {
-    if (_type == 0) {
-        basic.showLeds(`
-            # # # # #
-            # . . . .
-            # # # # #
-            . . . . #
-            # # # # #
-            `)
-    } else if (_type == 1) {
-        basic.showLeds(`
-            . . # . .
-            . # . # .
-            # . . . #
-            # # # # #
-            # . . . #
-            `)
-    } else {
-        basic.showLeds(`
-            # # # # .
-            # . . . #
-            # # # # .
-            # . . . #
-            # . . . #
-            `)
-    }
-    basic.pause(100)
-    basic.clearScreen()
-}
 radio.onReceivedValue(function (name, value) {
     OnRadioReceivedHandler(name, value)
 })
